@@ -1,0 +1,21 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "API for Fobject",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "alienpingu",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "google-spreadsheet": "^3.0.6",
+    "googleapis": "^39.2.0",
+    "knex": "^0.20.9",
+    "pg": "^7.18.1"
+  }
+}
