@@ -1,6 +1,4 @@
 import React from 'react';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
 
 class Register extends React.Component {
 	constructor(props) {
@@ -8,12 +6,12 @@ class Register extends React.Component {
 		this.state = {
 			email: '',
 			password: '',
-			username: ''
+			name: ''
 		}
 	}
 
-	onUsernameChange = (event) => {
-		this.setState({ username: event.target.value })
+	onNameChange = (event) => {
+		this.setState({ name: event.target.value })
 	}
 
 	onEmailChange = (event) => {
@@ -25,67 +23,67 @@ class Register extends React.Component {
 	} 
 
 	onSubmitSignIn = () => {
-		fetch('http://localhost:3001/register', {
+		fetch('http://192.168.1.130:3001/register', {
 			method: 'POST',
 		    headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify({
 				email: this.state.email,
 				password: this.state.password,
-				username: this.state.name
+				name: this.state.name
 			})
-		})
-			.then(response => response.json())
-			.then(user => {
-				if (user) {
-					console.log(user)
-					this.props.onRouteChange('logged')
-				}
-			})
+		}).then(res => res.status === 200 ? this.props.routeChange('config') : console.log(res))
 	}
 	render() {
 			return (
-				<Form>
-					<Form.Group controlId="formBasicPassword">
-					    <Form.Label>Username</Form.Label>
-					    <Form.Control 
-					    	type="text" 
-					    	placeholder="Enter username" 
-					    	onChange={this.onUsernameChange}
-					    />
-				  	</Form.Group>
+				<div className="form">
 
-				  	<Form.Group controlId="formBasicEmail">
-				    	<Form.Label>Email address</Form.Label>
-				    	<Form.Control 
-				    		type="email" 
-				    		placeholder="Enter email" 
-				    		onChange={this.onEmailChange}
-				    	/>
-				    	<Form.Text className="text-muted">
-				      	We'll never share your email with anyone else.
-				    	</Form.Text>
-				  	</Form.Group>
+				  	<h3 id="logo">Register</h3>
 
-				  	<Form.Group controlId="formBasicPassword">
-				    	<Form.Label>Password</Form.Label>
-				    	<Form.Control 
-				    		type="password" 
-				    		placeholder="Password" 
-				    		onChange={this.onPasswordChange}
-			    		/>
-				  	</Form.Group>
+				  	<label htmlFor="name">Name</label>
+				  	<input 
+				  		type="text" 
+				  		id="name" 
+				  		name="name" 
+				  		placeholder="Type in your name.." 
+				  		autoComplete="off" 
+				  		required 
+				  		onChange={this.onNameChange}
 
-				  	<Form.Group controlId="formBasicCheckbox">
-				    	<Form.Check type="checkbox" label="Check me out" />
-				  	</Form.Group>
-				  	<Button 
-				  		variant="primary" 
-				  		type="submit"
-				  		onClick={this.onSubmitSignIn}
-			  		>
-				    		Submit
-				  	</Button>
-				</Form>
+			  		/>
+
+				  	<label htmlFor="email">E-mail</label>
+				  	<input 
+				  		type="text" 
+				  		id="email" 
+				  		name="email" 
+				  		placeholder="Type in your email.." 
+				  		autoComplete="off" 
+				  		required 
+				  		onChange={this.onEmailChange}
+			  		/>
+
+				 	 <label htmlFor="password">Password</label>
+				 		<input 
+						  	type="password" 
+						  	id="password" 
+						  	name="password" 
+						  	placeholder="Enter your password.." 
+						  	autoComplete="off" 
+						  	required 
+						  	onChange={this.onPasswordChange}
+				  		/>
+
+				  	<p className="forgot">Forgot Password?</p>
+				  	<p className="login" onClick={() => this.props.routeChange('login')}>Log in</p>
+
+				  	<input 
+					  	type="submit" 
+					  	name="submit" 
+					  	value="Log In" 
+					  	onClick={this.onSubmitSignIn}
+				  	/>
+
+				</div>
 		);
 	}
 }

@@ -1,18 +1,16 @@
 import React from 'react';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
 
 class Login extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			password: '',
-			username: ''
+			email: '',
+			password: ''
 		}
 	}
 
-	onUsernameChange = (event) => {
-		this.setState({ username: event.target.value })
+	onEmailChange = (event) => {
+		this.setState({ email: event.target.value })
 	}
 
 	onPasswordChange = (event) => {
@@ -20,54 +18,58 @@ class Login extends React.Component {
 	} 
 
 	onSubmitSignIn = () => {
-		fetch('http://localhost:3001/Login', {
+		fetch('http://192.168.1.130:3001/login', {
 			method: 'POST',
 		    headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify({
 				password: this.state.password,
-				username: this.state.name
+				email: this.state.email
 			})
-		})
-			.then(response => response.json())
-			.then(user => {
-				if (user) {
-					console.log(user)
-					this.props.onRouteChange('logged')
-				}
-			})
+		}).then(response => response.json())
+		.then(res => (res.sheet) ? this.props.routeChange('render') : this.props.routeChange('config'))
+		
 	}
 	render() {
 			return (
-				<Form>
-					<Form.Group controlId="formBasicPassword">
-					    <Form.Label>Username</Form.Label>
-					    <Form.Control 
-					    	type="text" 
-					    	placeholder="Enter username" 
-					    	onChange={this.onUsernameChange}
-					    />
-				  	</Form.Group>
+				<div className="form">
 
-				  	<Form.Group controlId="formBasicPassword">
-				    	<Form.Label>Password</Form.Label>
-				    	<Form.Control 
-				    		type="password" 
-				    		placeholder="Password" 
-				    		onChange={this.onPasswordChange}
-			    		/>
-				  	</Form.Group>
+				  	<h3 id="logo">Log in</h3>
 
-				  	<Form.Group controlId="formBasicCheckbox">
-				    	<Form.Check type="checkbox" label="Check me out" />
-				  	</Form.Group>
-				  	<Button 
-				  		variant="primary" 
-				  		type="submit"
-				  		onClick={this.onSubmitSignIn}
-			  		>
-				    		Submit
-				  	</Button>
-				</Form>
+				  	<label htmlFor="email">E- mail</label>
+				  	<input 
+				  		type="text" 
+				  		id="email" 
+				  		name="email" 
+				  		placeholder="Type in your email.." 
+				  		autoComplete="off" 
+				  		required 
+				  		onChange={this.onEmailChange}
+
+			  		/>
+
+
+				 	 <label htmlFor="password">Password</label>
+				 		<input 
+						  	type="password" 
+						  	id="password" 
+						  	name="password" 
+						  	placeholder="Enter your password.." 
+						  	autoComplete="off" 
+						  	required 
+						  	onChange={this.onPasswordChange}
+				  		/>
+
+				  	<p className="forgot">Forgot Password?</p>
+				  	<p className="register" onClick={() => this.props.routeChange('register')} >Register</p>
+
+				  	<input 
+					  	type="submit" 
+					  	name="submit" 
+					  	value="Log In" 
+					  	onClick={this.onSubmitSignIn}
+				  	/>
+
+				</div>
 		);
 	}
 }

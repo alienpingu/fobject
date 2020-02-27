@@ -1,25 +1,33 @@
 const express = require('express');
 const cors = require('cors');
 const knex = require('knex');
+const bcrypt = require('bcrypt-nodejs');
+
 const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
 
 const register = require('./Controller/Register');
+const login = require('./Controller/Login');
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-const db = [
-	{
-		username: 'admin',
-		email: 'admin@gmail.com',
-		password: 'admin'
+const db = knex({
+	client:'pg',
+	connection: {
+		host: '127.0.0.1',
+		user: 'postgres',
+		password: 'postgres',
+		database: 'fobject'
 	}
-]
+});
+
+db.select('*').from('users').then(data => console.log(data));
 
 app.get ('/', (request, response) => {
+
 	response.json('App is running')
 })
 
@@ -126,10 +134,13 @@ app.get ('/convert/:customId', (request, response) => {
 	      response.json('No data found.');
 	    }
 	}
+	
 
 })
 
-app.post('/register', (req, res) => { register.handleRegister(req, res, db) })
+app.post('/register', (req, res) => { register.handleRegister(req, res, db, bcrypt) })
+
+app.post('/login', (req, res) => { login.handleLogin(req, res, db, bcrypt) })
 
 
 app.listen(3001, () => {
