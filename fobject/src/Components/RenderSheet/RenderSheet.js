@@ -10,7 +10,7 @@ class RenderSheet extends Component {
 		super(props);
 		this.state = {
     		config: this.props.renderConfig,
-    		template: 'rowbyrow'
+    		template: this.props.renderTemplate
 		}
 
 	}

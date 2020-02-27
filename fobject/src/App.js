@@ -13,21 +13,23 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-    	route: 'register',
-      config: ''
+    	route: 'config',
+      config: '',
+      template:''
     }
   }
 
   routeChange = (route) => {
     this.setState({route: route})
   }
-  updateConfig = (config) =>  {
+  updateConfig = (config, template) =>  {
     this.setState({config: config})
+    this.setState({template: template})
     this.routeChange('render');
   }
   
   render() {
-  	const { route } = this.state;
+  	const { route, config, template } = this.state;
 	return(
 		<div className='App'>
 			{
@@ -37,7 +39,7 @@ class App extends Component {
         :
         route === 'config' ? <Config routeChange={this.routeChange} updateConfig={this.updateConfig} />
         : 
-        route === 'render' ? <RenderSheet renderConfig={this.state.config} />
+        route === 'render' ? <RenderSheet renderConfig={config} renderTemplate={template} />
         :
         <h1>Invalid Route</h1>
       }

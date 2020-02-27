@@ -18,15 +18,16 @@ class Login extends React.Component {
 	} 
 
 	onSubmitSignIn = () => {
-		fetch('http://192.168.1.130:3001/login', {
+		fetch('http://localhost:3001/login', {
 			method: 'POST',
 		    headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify({
 				password: this.state.password,
 				email: this.state.email
 			})
-		}).then(response => response.json())
-		.then(res => (res.sheet) ? this.props.routeChange('render') : this.props.routeChange('config'))
+		}).then(res => res.status === 200 ? 
+						this.props.routeChange('config') : 
+						console.log(res))
 		
 	}
 	render() {
