@@ -116,9 +116,6 @@ input[type="submit"]:active {
 #logo:hover {
   color: cornflowerblue;
 }
-.connect {
-  width: 100% !important;
-}
 
 @media (max-width: 768px) {
   .form {

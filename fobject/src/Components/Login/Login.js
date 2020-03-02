@@ -26,7 +26,7 @@ class Login extends React.Component {
 				email: this.state.email
 			})
 		}).then(res => res.status === 200 ? 
-						this.props.routeChange('config') : 
+						this.props.updateSession(this.state.email, 'config') : 
 						console.log(res))
 		
 	}

@@ -59,3 +59,15 @@
   display: inline-block;
   vertical-align: middle;
 }
+.connect {
+  width: 100% !important;
+}
+
+.disable {
+  opacity: 0.4;
+  width: 100% !important;
+}
+.disable:hover {
+  opacity: 0.4 !important;
+  width: 100% !important;
+}

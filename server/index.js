@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const knex = require('knex');
 const bcrypt = require('bcrypt-nodejs');
+const bodyParser = require('body-parser');
 
 const fs = require('fs');
 const readline = require('readline');
@@ -9,10 +10,14 @@ const {google} = require('googleapis');
 
 const register = require('./Controller/Register');
 const login = require('./Controller/Login');
+const spreadsheet = require('./Controller/Spreadsheet');
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
 const db = knex({
 	client:'pg',
@@ -24,42 +29,34 @@ const db = knex({
 	}
 });
 
-
 app.get ('/', (request, response) => {
-
 	response.json('App is running')
 })
 
+app.post ('/spreadsheet', (req, res) => {spreadsheet.handleSpreadsheet(req, res, db)})
+
+app.post('/register', (req, res) => { register.handleRegister(req, res, db, bcrypt) })
+
+app.post('/login', (req, res) => { login.handleLogin(req, res, db, bcrypt) })
 
 app.get ('/convert/:customId', (request, response) => {
 	const  data  = request.params;
+	console.log(data);
 
-	// If modifying these scopes, delete token.json.
 	const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
-	// The file token.json stores the user's access and refresh tokens, and is
-	// created automatically when the authorization flow completes for the first
-	// time.
 	const TOKEN_PATH = 'token.json';
 
-	// Load client secrets from a local file.
 	fs.readFile('credentials.json', (err, content) => {
 	  if (err) return console.log('Error loading client secret file:', err);
 	  // Authorize a client with credentials, then call the Google Sheets API.
 	  authorize(JSON.parse(content), listMajors);
 	});
 
-	/**
-	 * Create an OAuth2 client with the given credentials, and then execute the
-	 * given callback function.
-	 * @param {Object} credentials The authorization client credentials.
-	 * @param {function} callback The callback to call with the authorized client.
-	 */
 	function authorize(credentials, callback) {
 	  const {client_secret, client_id, redirect_uris} = credentials.installed;
 	  const oAuth2Client = new google.auth.OAuth2(
 	      client_id, client_secret, redirect_uris[0]);
 
-	  // Check if we have previously stored a token.
 	  fs.readFile(TOKEN_PATH, (err, token) => {
 	    if (err) return getNewToken(oAuth2Client, callback);
 	    oAuth2Client.setCredentials(JSON.parse(token));
@@ -67,12 +64,6 @@ app.get ('/convert/:customId', (request, response) => {
 	  });
 	}
 
-	/**
-	 * Get and store new token after prompting for user authorization, and then
-	 * execute the given callback with the authorized OAuth2 client.
-	 * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
-	 * @param {getEventsCallback} callback The callback for the authorized client.
-	 */
 	function getNewToken(oAuth2Client, callback) {
 	  const authUrl = oAuth2Client.generateAuthUrl({
 	    access_type: 'offline',
@@ -88,7 +79,6 @@ app.get ('/convert/:customId', (request, response) => {
 	    oAuth2Client.getToken(code, (err, token) => {
 	      if (err) return console.error('Error while trying to retrieve access token', err);
 	      oAuth2Client.setCredentials(token);
-	      // Store the token to disk for later program executions
 	      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
 	        if (err) return console.error(err);
 	        console.log('Token stored to', TOKEN_PATH);
@@ -97,13 +87,6 @@ app.get ('/convert/:customId', (request, response) => {
 	    });
 	  });
 	}
-
-	/**
-	 * Prints the names and majors of students in a sample spreadsheet:
-	 * @see https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-	 * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
-	 */
-
 
 	function listMajors(auth) {
 	  const sheets = google.sheets({version: 'v4', auth});
@@ -133,14 +116,8 @@ app.get ('/convert/:customId', (request, response) => {
 	      response.json('No data found.');
 	    }
 	}
-	
 
 })
-
-app.post('/register', (req, res) => { register.handleRegister(req, res, db, bcrypt) })
-
-app.post('/login', (req, res) => { login.handleLogin(req, res, db, bcrypt) })
-
 
 app.listen(3001, () => {
 	console.log('App is running on port 3001')
